@@ -1,6 +1,7 @@
 # Copyright 2019 The Wazo Authors  (see the AUTHORS file)
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+import json
 
 from .models import Config
 
@@ -26,8 +27,8 @@ class ConfigService:
         configs = self.dao.list_()
         for config in configs:
             res.append({
-                'id': config.id,
-                'number': config.number,
-                'user_uuid': config.user_uuid
+                "id": config.id,
+                "number": config.number,
+                "user_uuid": config.user_uuid
             })
-        return str(res)
+        return json.dumps(res)
