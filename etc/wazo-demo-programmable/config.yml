@@ -1,0 +1,50 @@
+# This file should not be modified as it may get changed by the maintainer.
+# Add extra configuration files in the extra_config_files directory to override
+# the content from this file
+
+# Extra configuration directory where the config files overriding this file
+# should be.
+extra_config_files: '/etc/wazo-demo-programmable/conf.d'
+
+debug: false
+log_level: info
+log_file: /var/log/wazo-demo-programmable.log
+pid_file: /var/run/wazo-demo-programmable/wazo-demo-programmable.pid
+
+# REST API server
+rest_api:
+
+  # Listening address
+  listen: 0.0.0.0
+
+  # Listening port
+  port: 9400
+
+  certificate: /usr/share/xivo-certs/server.crt
+  private_key: /usr/share/xivo-certs/server.key
+
+  #CORS configuration. See Flask-CORS documentation for other values.
+  cors:
+
+    #Enabled by default
+    enabled: True
+
+    #Allow JSON preflight requests
+    allow_headers: [Content-Type, X-Auth-Token, Wazo-Tenant]
+
+# Connection info to the authentication server
+auth:
+  host: localhost
+  port: 9497
+  verify_certificate: /usr/share/xivo-certs/server.crt
+
+websocketd:
+    host: localhost
+
+calld:
+  host: localhost
+  port: 9500
+  verify_certificate: /usr/share/xivo-certs/server.crt
+
+enabled_plugins:
+  auth: true

@@ -1,0 +1,17 @@
+git+https://github.com/wazo-pbx/xivo-lib-rest-client.git
+git+https://github.com/wazo-pbx/xivo-lib-python.git
+git+https://github.com/wazo-pbx/wazo-calld-client.git
+git+https://github.com/wazo-pbx/wazo-auth-client.git
+git+https://github.com/wazo-pbx/wazo-confd-client.git
+git+https://github.com/wazo-pbx/wazo-websocketd-client.git
+websocket-client==0.37.0
+urllib3==1.24.3
+cheroot==6.5.2
+flask==1.0.2
+marshmallow==2.16.3
+python-consul==0.7.0
+python-dateutil==2.5.3  # from marshmallow, to accept more date formats
+pyyaml==3.12
+requests==2.21.0
+stevedore==1.17.1
+flask-classful
