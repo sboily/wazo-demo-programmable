@@ -15,3 +15,6 @@ class ConfigResource(FlaskView):
 
     def list(self):
         return self.service.get_configs()
+
+    def remove(self, id):
+        return self.service.delete_config(id)

@@ -17,5 +17,17 @@ class ConfigService:
         config.user_uuid = user_uuid
         return str(self.dao.create(config))
 
+    def delete_config(self, id):
+        self.dao.delete(id)
+        return id
+
     def get_configs(self):
-        return str(self.dao.list_())
+        res = []
+        configs = self.dao.list_()
+        for config in configs:
+            res.append({
+                'id': config.id,
+                'number': config.number,
+                'user_uuid': config.user_uuid
+            })
+        return str(res)

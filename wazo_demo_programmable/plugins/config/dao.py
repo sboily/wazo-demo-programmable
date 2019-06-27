@@ -16,6 +16,23 @@ class ConfigDAO:
         return self.session.query(Config).all()
 
     def create(self, config):
+        if self._search(config.number):
+            return False
+
         self.session.add(config)
-        self.session.flush()
-        return config
+        self.session.commit()
+        return True
+
+    def delete(self, id):
+        config = self.session.query(Config).filter(Config.id == id).first()
+        if config:
+            self.session.delete(config)
+            self.session.commit()
+            return True
+        return False
+
+    def _search(self, number):
+        search = self.session.query(Config).filter(Config.number == number).first()
+        if search:
+            return True
+        return False
