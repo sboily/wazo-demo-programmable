@@ -6,6 +6,7 @@ import logging
 from contextlib import contextmanager
 from threading import Thread
 
+from wazo_auth_client import Client as AuthClient
 from wazo_websocketd_client import Client as Websocketd
 
 logger = logging.getLogger(__name__)
@@ -28,15 +29,20 @@ def consumer_thread(consumer):
 class Consumer():
 
     def __init__(self, global_config):
-        self.config = global_config['websocketd']
+        self.config = global_config
         self._is_running = False
         self._callbacks = {}
 
     def run(self):
         logger.info("Running WEBSOCKET consumer")
-        token = '03ade0f5-00bf-4ba4-bdef-b1fed1a636b8'
-        ws = Websocketd(self.config['host'], token=token, verify_certificate=False)
-        self._run_ws(ws)
+        auth_client = AuthClient(**self.config['auth'])
+        try:
+            token_data = auth_client.token.new(expiration=28800)
+            token = token_data['token']
+            ws = Websocketd(self.config['websocketd']['host'], token=token, verify_certificate=False)
+            self._run_ws(ws)
+        except Exception as e:
+            print('Authentication error', e)
 
     def _run_ws(self, ws):
         for event in self._callbacks:

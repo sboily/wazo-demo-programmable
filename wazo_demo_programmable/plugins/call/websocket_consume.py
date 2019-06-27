@@ -16,7 +16,7 @@ class WsEventHandler:
         ws_consumer.on_event('application_node_updated', self._application_node_updated)
 
     def _application_call_entered(self, event):
-        self._service.make_call(event)
+        self._service.incoming_call(event)
 
     def _application_node_updated(self, data):
         application_uuid = data['application_uuid']

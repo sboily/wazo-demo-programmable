@@ -10,6 +10,9 @@ class CallService:
     def __init__(self, config):
         self.config = config
 
+    def incoming_call(self, data):
+        print(data)
+
     def make_call(self, data):
         calld = get_calld_client_from_config(token=self._get_token(), **self.config['calld'])
         application_uuid = data['application_uuid']
@@ -17,7 +20,8 @@ class CallService:
         call_id = channel['id']
         exten = channel['dialed_extension']
         callerid = channel['caller_id_number']
-        context = wazo.config['context']
+        context = 'default'
+        print(data)
 
         node = calld.applications.create_node(application_uuid, [call_id,])
         call = {
