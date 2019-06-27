@@ -46,5 +46,4 @@ calld:
   port: 9500
   verify_certificate: /usr/share/xivo-certs/server.crt
 
-enabled_plugins:
-  auth: true
+db_uri: 'sqlite:////tmp/config.db'

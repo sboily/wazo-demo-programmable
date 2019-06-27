@@ -10,6 +10,7 @@ from xivo import plugin_helpers
 from . import websocket
 from .http_server import CoreHTTP
 from .thread_manager import ThreadManager
+from .plugin_helpers.db import init_db
 
 
 logger = logging.getLogger(__name__)
@@ -21,6 +22,7 @@ class Controller:
         self.server = CoreHTTP(config)
         self.websocket_consumer = websocket.Consumer(config)
         self.thread_manager = ThreadManager()
+
         plugin_helpers.load(
             namespace='wazo_demo_programmable.plugins',
             names=config['enabled_plugins'],
@@ -30,6 +32,8 @@ class Controller:
                 'flask': self.server.get_app(),
             }
         )
+
+        init_db(config['db_uri'])
 
     def run(self):
         logger.info('wazo-demo-programmable starting...')

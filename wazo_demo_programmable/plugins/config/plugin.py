@@ -5,6 +5,7 @@ from wazo_demo_programmable.plugin_helpers.plugin import create_blueprint
 
 from .http import ConfigResource
 from .service import ConfigService
+from .dao import ConfigDAO
 
 
 config = create_blueprint('config', __name__)
@@ -16,7 +17,7 @@ class Plugin:
         core = dependencies['flask']
         configuration = dependencies['config']
 
-        service = ConfigService(configuration)
+        service = ConfigService(configuration, ConfigDAO())
 
         ConfigResource.service = service
         ConfigResource.register(config, route_base='/config')

@@ -2,15 +2,20 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 
+from .models import Config
+
+
 class ConfigService:
 
-    def __init__(self, config):
+    def __init__(self, config, dao):
         self.config = config
-        self.pbx_config = dict()
+        self.dao = dao
 
     def set_config(self, number, user_uuid):
-        self.pbx_config[number] = user_uuid
-        return str(self.pbx_config[number])
+        config = Config()
+        config.number = number
+        config.user_uuid = user_uuid
+        return str(self.dao.create(config))
 
     def get_configs(self):
-        return str(self.pbx_config)
+        return str(self.dao.list_())
