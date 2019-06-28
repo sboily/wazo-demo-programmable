@@ -12,3 +12,6 @@ class AuthResource(FlaskView):
         username = param.get('username')
         password = param.get('password')
         return self.service.get_auth(username, password)
+
+    def logout(self, token):
+        return self.service.revoke(token)

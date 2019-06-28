@@ -18,9 +18,5 @@ class WsEventHandler:
     def _application_call_entered(self, event):
         self._service.incoming_call(event)
 
-    def _application_node_updated(self, data):
-        application_uuid = data['application_uuid']
-        calls = data['node']['calls']
-        if len(calls) > 1:
-            call_id = data['node']['calls'][0]['id']
-            self._service.answer_call(application_uuid, call_id)
+    def _application_node_updated(self, event):
+        self._service.node_updated(event)

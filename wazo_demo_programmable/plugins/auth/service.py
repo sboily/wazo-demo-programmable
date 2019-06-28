@@ -1,7 +1,7 @@
 # Copyright 2019 The Wazo Authors  (see the AUTHORS file)
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from wazo_demo_programmable.plugin_helpers.client import get_auth_client_from_config
+from ...plugin_helpers.client import get_auth_client_from_config
 
 
 class AuthService:
@@ -16,3 +16,8 @@ class AuthService:
             'token': token.get('token'),
             'user_uuid': token.get('metadata').get('uuid')
         })
+
+    def revoke(self, token):
+        auth = get_auth_client_from_config(**self.config['auth'], token=token)
+        token = auth.token.revoke(token)
+        return str(token)

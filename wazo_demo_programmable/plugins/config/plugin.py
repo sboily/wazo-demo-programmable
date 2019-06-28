@@ -1,7 +1,7 @@
 # Copyright 2019 The Wazo Authors  (see the AUTHORS file)
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from wazo_demo_programmable.plugin_helpers.plugin import create_blueprint
+from ...plugin_helpers.plugin import create_blueprint
 
 from .http import ConfigResource
 from .service import ConfigService
