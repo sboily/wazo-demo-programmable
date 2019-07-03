@@ -10,6 +10,8 @@ class AuthService:
         self.config = config
 
     def get_auth(self, username, password):
+        self.config.get('auth').pop('username')
+        self.config.get('auth').pop('password')
         auth = get_auth_client_from_config(**self.config['auth'], username=username, password=password)
         token = auth.token.new(expiration=3600)
         return str({
