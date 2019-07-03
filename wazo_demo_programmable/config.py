@@ -25,6 +25,10 @@ _DEFAULT_CONFIG = {
         'port': _DEFAULT_HTTPS_PORT,
         'certificate': _CERT_FILE,
         'private_key': '/usr/share/xivo-certs/server.key',
+        'cors': {
+            'enabled': True,
+            'allow_headers': ['Content-Type', 'X-Auth-Token', 'Wazo-Tenant'],
+        }
     },
     'auth': {
         'host': 'localhost',

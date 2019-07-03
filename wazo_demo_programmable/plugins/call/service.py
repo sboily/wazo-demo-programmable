@@ -17,8 +17,8 @@ class CallService:
 
     def outgoing_call(self, data):
         print('Outgoing call..')
-        print(data)
         self.calld = get_calld_client_from_config(token=self._get_token(), **self.config['calld'])
+        #_, context = self._user_extension_context(user_uuid)
         context = 'default'
         exten = data['call']['dialed_extension']
         print('Call extension {} in context {}'.format(exten, context))
@@ -32,11 +32,7 @@ class CallService:
         application_uuid = data['application_uuid']
         config = self._get_config(dialed_extension)
         if config:
-            #exten, context = self._user_extension_context(config['user_uuid'])
-            exten = config['user_uuid']
-            context = 'usersharedlines'
-            print('Call extension {} in context {}'.format(exten, context))
-            self._make_call_with_extension(data, exten, context)
+            self._make_call_with_user_uuid(data, config['user_uuid'])
         else:
             print('There is no configuration for this number')
             self.hangup_call(application_uuid, call_id)
@@ -82,13 +78,11 @@ class CallService:
         confd = get_confd_client_from_config(token=self._get_token(), **self.config['confd'])
         return confd.users.get(user_uuid)
 
-    def _make_call_with_extension(self, data, exten, context):
+    def _make_call_with_extension(self, data, exten, context, user_uuid=None):
         application_uuid = data['application_uuid']
         channel = data['call']
         call_id = channel['id']
-        exten = exten or channel['dialed_extension']
         callerid = channel['caller_id_number']
-        context = context
 
         node = self.calld.applications.create_node(application_uuid, [call_id,])
         print('Creating node conversation: {}'.format(node))
@@ -96,13 +90,33 @@ class CallService:
             'autoanswer': False,
             'context': context,
             'exten': exten,
-            'variables': {'callerid': callerid, 'WAZO_IS_ORIGINATE': 'originate'} # Remove this variable ...
+            'displayed_caller_id_number': callerid,
         }
         try:
             chan = self.calld.applications.make_call_to_node(application_uuid, node['uuid'], call)
             print('Add new channel to the conversation: {}'.format(chan))
         except:
             print('Error to call this number: {}'.format(exten))
+            self.hangup_call(application_uuid, call_id)
+
+    def _make_call_with_user_uuid(self, data, user_uuid):
+        application_uuid = data['application_uuid']
+        channel = data['call']
+        call_id = channel['id']
+        callerid = channel['caller_id_number']
+
+        node = self.calld.applications.create_node(application_uuid, [call_id,])
+        print('Creating node conversation: {}'.format(node))
+        call = {
+            'autoanswer': False,
+            'user_uuid': user_uuid,
+            'displayed_caller_id_number': callerid,
+        }
+        try:
+            chan = self.calld.applications.make_call_user_to_node(application_uuid, node['uuid'], call)
+            print('Add new channel to the conversation: {}'.format(chan))
+        except Exception as e:
+            print('Error to call this user: {}'.format(user_uuid))
             self.hangup_call(application_uuid, call_id)
 
     def _get_configs(self):

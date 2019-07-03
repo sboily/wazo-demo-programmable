@@ -15,6 +15,9 @@ class WsEventHandler:
         ws_consumer.on_event('application_call_entered', self._application_call_entered)
         ws_consumer.on_event('application_user_outgoing_call_created', self._application_user_outgoing_call_created)
         ws_consumer.on_event('application_node_updated', self._application_node_updated)
+        ws_consumer.on_event('call_updated', self._data)
+        ws_consumer.on_event('call_created', self._data)
+        ws_consumer.on_event('call_ended', self._data)
 
     def _application_call_entered(self, event):
         self._service.incoming_call(event)
@@ -24,3 +27,6 @@ class WsEventHandler:
 
     def _application_user_outgoing_call_created(self, event):
         self._service.outgoing_call(event)
+
+    def _data(self, event):
+        print(event)

@@ -8,6 +8,7 @@ from datetime import timedelta
 
 from cheroot import wsgi
 from flask import Flask
+from flask_cors import CORS
 from xivo import http_helpers
 
 
@@ -27,10 +28,17 @@ class CoreHTTP:
         app.secret_key = os.urandom(24)
         app.config.update(global_config)
         app.permanent_session_lifetime = timedelta(minutes=5)
+        self._load_cors()
         self.server = None
 
     def get_app(self):
         return app
+
+    def _load_cors(self):
+        cors_config = dict(self.config.get('cors', {}))
+        enabled = cors_config.pop('enabled', False)
+        if enabled:
+            CORS(app, **cors_config)
 
     def run(self):
         bind_addr = (self.config['listen'], self.config['port'])
