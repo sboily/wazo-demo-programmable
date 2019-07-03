@@ -15,7 +15,18 @@ class CallService:
         self.config = config
         self.calld = None
 
+    def outgoing_call(self, data):
+        print('Outgoing call..')
+        print(data)
+        self.calld = get_calld_client_from_config(token=self._get_token(), **self.config['calld'])
+        context = 'default'
+        exten = data['call']['dialed_extension']
+        print('Call extension {} in context {}'.format(exten, context))
+        self._make_call_with_extension(data, exten, context)
+
     def incoming_call(self, data):
+        print('Incoming call..')
+        self.calld = get_calld_client_from_config(token=self._get_token(), **self.config['calld'])
         dialed_extension = data['call']['dialed_extension']
         call_id = data['call']['id']
         application_uuid = data['application_uuid']
@@ -43,8 +54,7 @@ class CallService:
         elif len(calls) == 1:
             print('There is a channel inside the node, waiting for a second...')
         else:
-            print(data)
-            print('Node is now empty and it will been removed')
+            print('Node is now empty and it will been removed', data)
 
     def answer_call(self, application_uuid, call_id):
         self.calld.applications.answer_call(application_uuid, call_id)
@@ -88,10 +98,13 @@ class CallService:
             'exten': exten,
             'variables': {'callerid': callerid, 'WAZO_IS_ORIGINATE': 'originate'} # Remove this variable ...
         }
-        chan = self.calld.applications.make_call_to_node(application_uuid, node['uuid'], call)
-        print('Add new channel to the conversation: {}'.format(chan))
+        try:
+            chan = self.calld.applications.make_call_to_node(application_uuid, node['uuid'], call)
+            print('Add new channel to the conversation: {}'.format(chan))
+        except:
+            print('Error to call this number: {}'.format(exten))
+            self.hangup_call(application_uuid, call_id)
 
     def _get_configs(self):
-        self.calld = get_calld_client_from_config(token=self._get_token(), **self.config['calld'])
         r = requests.get("https://localhost:9400/config/list/", verify=False)
         return json.loads(r.text)
