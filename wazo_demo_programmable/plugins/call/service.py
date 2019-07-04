@@ -18,10 +18,13 @@ class CallService:
     def outgoing_call(self, data):
         print('Outgoing call..')
         self.calld = get_calld_client_from_config(token=self._get_token(), **self.config['calld'])
-        #_, context = self._user_extension_context(user_uuid)
-        context = 'default'
+        user_uuid = data['call']['user_uuid']
+        call_id = data['call']['id']
+        application_uuid = data['application_uuid']
+        _, context = self._user_extension_context(user_uuid)
         exten = data['call']['dialed_extension']
         print('Call extension {} in context {}'.format(exten, context))
+        self.send_progress(application_uuid, call_id)
         self._make_call_with_extension(data, exten, context)
 
     def incoming_call(self, data):
@@ -30,12 +33,20 @@ class CallService:
         dialed_extension = data['call']['dialed_extension']
         call_id = data['call']['id']
         application_uuid = data['application_uuid']
+        self.send_progress(application_uuid, call_id)
         config = self._get_config(dialed_extension)
         if config:
             self._make_call_with_user_uuid(data, config['user_uuid'])
         else:
             print('There is no configuration for this number')
             self.hangup_call(application_uuid, call_id)
+
+    def call_ended(self, data):
+        call_id = data['call_id']
+        print('Call ended {}'.format(call_id))
+
+    def send_progress(self, application_uuid, call_id):
+        self.calld.applications.start_progress(application_uuid, call_id)
 
     def hangup_call(self, application_uuid, call_id):
         self.calld.applications.hangup_call(application_uuid, call_id)
@@ -50,7 +61,7 @@ class CallService:
         elif len(calls) == 1:
             print('There is a channel inside the node, waiting for a second...')
         else:
-            print('Node is now empty and it will been removed', data)
+            print('Node is now empty and it will been removed')
 
     def answer_call(self, application_uuid, call_id):
         self.calld.applications.answer_call(application_uuid, call_id)
